@@ -26,7 +26,7 @@
 <h3>arXiv 2025</h3>
 
 <div align="center">
-  <img width="60%" src="assets/MagicArticulate_teaser.gif">
+  <img width="80%" src="assets/MagicArticulate_teaser.gif">
 </div>
 
 <p>
@@ -57,13 +57,10 @@ Note: The data with rigging has been deduplicated (over 150K). The quality of mo
 </p>
 
 ## Autoregressive skeleton generation
-
+We formulate skeleton generation as a sequence modeling problem, leveraging an autoregressive transformer to naturally handle varying numbers of bones or joints within skeletons.
 <p align="center">
   <img width="80%" src="assets/ar_demo.gif"/>
 </p>
-
-### Sequence ordering (Spatial and Hierarchical)
-
 
 ## Acknowledgment
 
