@@ -45,7 +45,7 @@
 - 2025.2.26: Release [paper](https://arxiv.org/abs/2404.11151) and metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0)!
 
 ## Dataset: Articulation-XL2.0
-
+### Overview
 We introduces <b>Articulation-XL2.0</b>, a large-scale dataset featuring over <b>48K</b> 3D models with high-quality articulation annotations, filtered from Objaverse-XL. Compared to version 1.0, Articulation-XL2.0 includes 3D models with multiple components. For further details, please refer to the statistics below.
 <p align="center">
   <img width="60%" src="assets/data_statistics.png"/>
@@ -57,7 +57,7 @@ Note: The data with rigging has been deduplicated (over 150K). The quality of mo
 </p>
 
 ### Data visualization
-We provide a method for visualizing 3D models with skeleton using [Pyrender](https://github.com/mmatl/pyrender), modified from [Lab4D](https://github.com/lab4d-org/lab4d/tree/ppr/). For more details, please refer [here](https://github.com/Seed3D/MagicArticulate/data_visualization).
+We provide a method for visualizing 3D models with skeleton using [Pyrender](https://github.com/mmatl/pyrender), modified from [Lab4D](https://github.com/lab4d-org/lab4d/tree/ppr/). For more details, please refer [here](https://github.com/Seed3D/MagicArticulate/tree/main/data_visualization).
 
 ## Autoregressive skeleton generation
 We formulate skeleton generation as a sequence modeling problem, leveraging an autoregressive transformer to naturally handle varying numbers of bones or joints within skeletons.
