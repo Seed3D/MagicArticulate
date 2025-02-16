@@ -42,7 +42,7 @@
 <br />
 
 ## Update
-- 2025.2.26: Release [paper](https://arxiv.org/abs/2404.11151) and metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0)!
+- 2025.2.26: Release [paper](https://arxiv.org/abs/2404.11151), metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) and data visualization codes!
 
 ## Dataset: Articulation-XL2.0
 ### Overview
@@ -60,9 +60,17 @@ Note: The data with rigging has been deduplicated (over 150K). The quality of mo
 We provide a method for visualizing 3D models with skeleton using [Pyrender](https://github.com/mmatl/pyrender), modified from [Lab4D](https://github.com/lab4d-org/lab4d/tree/ppr/). For more details, please refer [here](https://github.com/Seed3D/MagicArticulate/tree/main/data_visualization).
 
 ## Autoregressive skeleton generation
+
+### Overview
 We formulate skeleton generation as a sequence modeling problem, leveraging an autoregressive transformer to naturally handle varying numbers of bones or joints within skeletons.
 <p align="center">
   <img width="80%" src="assets/ar_demo.gif"/>
+</p>
+
+### Sequence ordering
+We provide two ways for sequence ordering: spatial and hierarchical sequence ordering. More details please refer to the paper.
+<p align="center">
+  <img width="60%" src="assets/sequence_ordering_demo.gif"/>
 </p>
 
 ## Acknowledgment
