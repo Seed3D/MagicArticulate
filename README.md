@@ -46,7 +46,7 @@
 
 ## Dataset: Articulation-XL2.0
 
-We introduces <b>Articulation-XL2.0</b>, a large-scale dataset featuring over <b>57K</b> 3D models with high-quality articulation annotations, filtered from Objaverse-XL. Compared to version 1.0, Articulation-XL2.0 incorporates additional data from Sketchfab and includes 3D models with multiple components. For further details, please refer to the statistics below.
+We introduces <b>Articulation-XL2.0</b>, a large-scale dataset featuring over <b>48K</b> 3D models with high-quality articulation annotations, filtered from Objaverse-XL. Compared to version 1.0, Articulation-XL2.0 includes 3D models with multiple components. For further details, please refer to the statistics below.
 <p align="center">
   <img width="60%" src="assets/data_statistics.png"/>
 </p>
@@ -56,6 +56,9 @@ Note: The data with rigging has been deduplicated (over 150K). The quality of mo
   <img width="80%" src="assets/articulation-xl2.0.png"/>
 </p>
 
+### Data visualization
+We provide a method for visualizing 3D models with skeleton using [Pyrender](https://github.com/mmatl/pyrender), modified from [Lab4D](https://github.com/lab4d-org/lab4d/tree/ppr/). For more details, please refer [here](https://github.com/Seed3D/MagicArticulate/data_visualization).
+
 ## Autoregressive skeleton generation
 We formulate skeleton generation as a sequence modeling problem, leveraging an autoregressive transformer to naturally handle varying numbers of bones or joints within skeletons.
 <p align="center">
@@ -64,7 +67,7 @@ We formulate skeleton generation as a sequence modeling problem, leveraging an a
 
 ## Acknowledgment
 
-We appreciate the insightful discussions with [Zhan Xu](https://github.com/zhan-xu) regrading [RigNet](https://github.com/zhan-xu/RigNet) and with [Biao Zhang](http://1zb.github.io/) regrading [Functional Diffusion](https://1zb.github.io/functional-diffusion/). The code is built based on [MeshAnything](https://github.com/buaacyw/MeshAnything), [Functional Diffusion](https://1zb.github.io/functional-diffusion/), [Michelangelo](https://github.com/NeuralCarver/Michelangelo/) and [Lab4D](https://github.com/lab4d-org/lab4d).
+We appreciate the insightful discussions with [Zhan Xu](https://github.com/zhan-xu) regrading [RigNet](https://github.com/zhan-xu/RigNet) and with [Biao Zhang](http://1zb.github.io/) regrading [Functional Diffusion](https://1zb.github.io/functional-diffusion/). The code is built based on [MeshAnything](https://github.com/buaacyw/MeshAnything), [Functional Diffusion](https://1zb.github.io/functional-diffusion/), [RigNet](https://github.com/zhan-xu/RigNet), [Michelangelo](https://github.com/NeuralCarver/Michelangelo/) and [Lab4D](https://github.com/lab4d-org/lab4d).
 
 
 ## Citation
