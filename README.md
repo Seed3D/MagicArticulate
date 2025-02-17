@@ -6,12 +6,12 @@
   <a href="https://chaoyuesong.github.io"><strong>Chaoyue Song</strong></a><sup>1,2</sup>,
   <a href="https://jeff95.me/"><strong>Jianfeng Zhang</strong></a><sup>2*</sup>,
   <a href="https://lixiulive.com/"><strong>Xiu Li</strong></a><sup>2</sup>,
-  <a href="https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0"><strong>Fan Yang</strong></a><sup>1,2</sup>,
+  <a href="https://scholar.google.com/citations?user=afDvaa8AAAAJ&hl"><strong>Fan Yang</strong></a><sup>1,2</sup>,
   <a href="https://buaacyw.github.io/"><strong>Yiwen Chen</strong></a><sup>1</sup>,
   <a href="https://zcxu-eric.github.io/"><strong>Zhongcong Xu</strong></a><sup>2</sup>,
  <br>
   <a href="https://liewjunhao.github.io/"><strong>Jun Hao Liew</strong></a><sup>2</sup>,
-  <a href="https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0"><strong>Xiaoyang Guo</strong></a><sup>2</sup>,
+  <strong>Xiaoyang Guo</strong><sup>2</sup>,
   <a href="https://sites.google.com/site/fayaoliu"><strong>Fayao Liu</strong></a><sup>3</sup>,
   <a href="https://scholar.google.com.sg/citations?user=Q8iay0gAAAAJ"><strong>Jiashi Feng</strong></a><sup>2</sup>,
   <a href="https://guosheng.github.io/"><strong>Guosheng Lin</strong></a><sup>1*</sup>
@@ -31,8 +31,8 @@
 
 <p>
   <a href="https://chaoyuesong.github.io/MagicArticulate/"><strong>Project</strong></a> |
-  <a href="https://arxiv.org/abs/2404.11151"><strong>Paper</strong></a> |
-  <a href="https://www.youtube.com/watch?v=6f-lyqLMbRc"><strong>Video</strong></a> |
+  <a href="https://chaoyuesong.github.io/files/MagicArticulate_paper.pdf"><strong>Paper</strong></a> |
+  <a href="https://www.youtube.com/watch?v=eJP_VR4cVnk"><strong>Video</strong></a> |
   <a href="https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0"><strong>Data: Articulation-XL2.0</strong></a>
 </p>
 
@@ -41,8 +41,8 @@
 
 <br />
 
-## Update
-- 2025.2.26: Release [paper](https://arxiv.org/abs/2404.11151), metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) and data visualization codes!
+## News
+- 2025.2.16: Release [paper](https://chaoyuesong.github.io/files/MagicArticulate_paper.pdf), metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) and data visualization codes!
 
 ## Dataset: Articulation-XL2.0
 ### Overview
