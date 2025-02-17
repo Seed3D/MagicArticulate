@@ -56,6 +56,12 @@ Note: The data with rigging has been deduplicated (over 150K). The quality of mo
   <img width="80%" src="assets/articulation-xl2.0.png"/>
 </p>
 
+### Metadata
+We provide the following information in the metadata of Articulation-XL2.0.
+```
+uuid,source,vertex_count,face_count,joint_count,bone_count,category_label,fileIdentifier
+```
+
 ### Data visualization
 We provide a method for visualizing 3D models with skeleton using [Pyrender](https://github.com/mmatl/pyrender), modified from [Lab4D](https://github.com/lab4d-org/lab4d/tree/ppr/). For more details, please refer [here](https://github.com/Seed3D/MagicArticulate/tree/main/data_visualization).
 
