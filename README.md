@@ -31,7 +31,7 @@
 
 <p>
   <a href="https://chaoyuesong.github.io/MagicArticulate/"><strong>Project</strong></a> |
-  <a href="https://chaoyuesong.github.io/files/MagicArticulate_paper.pdf"><strong>Paper</strong></a> |
+  <a href="https://arxiv.org/abs/2502.12135"><strong>Paper</strong></a> |
   <a href="https://www.youtube.com/watch?v=eJP_VR4cVnk"><strong>Video</strong></a> |
   <a href="https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0"><strong>Data: Articulation-XL2.0</strong></a>
 </p>
@@ -42,7 +42,7 @@
 <br />
 
 ## News
-- 2025.2.16: Release [paper](https://chaoyuesong.github.io/files/MagicArticulate_paper.pdf), metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) and data visualization codes!
+- 2025.2.16: Release [paper](https://arxiv.org/abs/2502.12135), metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) and data visualization codes!
 
 ## Dataset: Articulation-XL2.0
 ### Overview
@@ -87,6 +87,10 @@ We appreciate the insightful discussions with [Zhan Xu](https://github.com/zhan-
 ## Citation
 
 ```
-@inproceedings{
+@article{song2025magicarticulate,
+      title={MagicArticulate: Make Your 3D Models Articulation-Ready}, 
+      author={Chaoyue Song and Jianfeng Zhang and Xiu Li and Fan Yang and Yiwen Chen and Zhongcong Xu and Jun Hao Liew and Xiaoyang Guo and Fayao Liu and Jiashi Feng and Guosheng Lin},
+      journal={arXiv preprint arXiv:2502.12135},
+      year={2025},
 }
 ```
