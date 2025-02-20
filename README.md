@@ -44,6 +44,13 @@
 ## News
 - 2025.2.16: Release [paper](https://arxiv.org/abs/2502.12135), metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) and data visualization codes!
 
+## ToDo
+
+- [x] Release Articulation-XL metadata.
+- [ ] Release Articulation-XL preprocessed data or data preprocessing code.
+- [ ] Release pretrained models and inference code.
+- [ ] Release training code.
+
 ## Dataset: Articulation-XL2.0
 ### Overview
 We introduces <b>Articulation-XL2.0</b>, a large-scale dataset featuring over <b>48K</b> 3D models with high-quality articulation annotations, filtered from Objaverse-XL. Compared to version 1.0, Articulation-XL2.0 includes 3D models with multiple components. For further details, please refer to the statistics below.
@@ -59,7 +66,7 @@ Note: The data with rigging has been deduplicated (over 150K). The quality of mo
 ### Metadata
 We provide the following information in the metadata of Articulation-XL2.0.
 ```
-uuid,source,vertex_count,face_count,joint_count,bone_count,category_label,fileIdentifier
+uuid,source,vertex_count,face_count,joint_count,bone_count,category_label,fileType,fileIdentifier
 ```
 
 ### Data visualization
@@ -68,7 +75,7 @@ We provide a method for visualizing 3D models with skeleton using [Pyrender](htt
 ## Autoregressive skeleton generation
 
 ### Overview
-We formulate skeleton generation as a sequence modeling problem, leveraging an autoregressive transformer to naturally handle varying numbers of bones or joints within skeletons.
+We formulate skeleton generation as a sequence modeling problem, leveraging an autoregressive transformer to naturally handle varying numbers of bones or joints within skeletons. If you are interested in autoregressive in GenAI, check [this awesome list](https://github.com/ChaoyueSong/Awesome-Auto-Regressive-in-GenerativeAI).
 <p align="center">
   <img width="80%" src="assets/ar_demo.gif"/>
 </p>
