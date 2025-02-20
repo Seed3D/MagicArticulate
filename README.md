@@ -47,7 +47,7 @@
 ## ToDo
 
 - [x] Release Articulation-XL metadata.
-- [ ] Release Articulation-XL preprocessed data or data preprocessing code.
+- [ ] Release Articulation-XL preprocessed data (a NPZ-style file includes vertices, faces, joints, bones, skinning weights, uuid, etc.) or data preprocessing code.
 - [ ] Release pretrained models and inference code.
 - [ ] Release training code.
 
