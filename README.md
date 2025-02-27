@@ -4,7 +4,7 @@
 
 <p>
   <a href="https://chaoyuesong.github.io"><strong>Chaoyue Song</strong></a><sup>1,2</sup>,
-  <a href="https://jeff95.me/"><strong>Jianfeng Zhang</strong></a><sup>2*</sup>,
+  <a href="http://jeff95.me/"><strong>Jianfeng Zhang</strong></a><sup>2*</sup>,
   <a href="https://lixiulive.com/"><strong>Xiu Li</strong></a><sup>2</sup>,
   <a href="https://scholar.google.com/citations?user=afDvaa8AAAAJ&hl"><strong>Fan Yang</strong></a><sup>1</sup>,
   <a href="https://buaacyw.github.io/"><strong>Yiwen Chen</strong></a><sup>1</sup>,
@@ -23,7 +23,7 @@
   <sup>3 </sup>A*STAR
 </p>
 
-<h3>arXiv 2025</h3>
+<h3>CVPR 2025</h3>
 
 <div align="center">
   <img width="80%" src="assets/MagicArticulate_teaser.gif">
@@ -42,6 +42,7 @@
 <br />
 
 ## News
+- 2025.2.27: MagicArticulate was accepted by CVPR2025, see you in Nashville! Data and code are coming soon—stay tuned! 🚀
 - 2025.2.16: Release [paper](https://arxiv.org/abs/2502.12135), metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) and data visualization codes!
 
 ## ToDo
@@ -53,7 +54,7 @@
 
 ## Dataset: Articulation-XL2.0
 ### Overview
-We introduces <b>Articulation-XL2.0</b>, a large-scale dataset featuring over <b>48K</b> 3D models with high-quality articulation annotations, filtered from Objaverse-XL. Compared to version 1.0, Articulation-XL2.0 includes 3D models with multiple components. For further details, please refer to the statistics below.
+We introduce <b>Articulation-XL2.0</b>, a large-scale dataset featuring over <b>48K</b> 3D models with high-quality articulation annotations, filtered from Objaverse-XL. Compared to version 1.0, Articulation-XL2.0 includes 3D models with multiple components. For further details, please refer to the statistics below.
 <p align="center">
   <img width="60%" src="assets/data_statistics.png"/>
 </p>
