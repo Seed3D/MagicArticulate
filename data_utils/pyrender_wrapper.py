@@ -3,7 +3,6 @@
 import os
 import numpy as np
 import cv2
-import pdb
 import pyrender
 import trimesh
 from pyrender import (
