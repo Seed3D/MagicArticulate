@@ -42,7 +42,7 @@
 <br />
 
 ## News
-- 2025.3.20: Release preprocessed data of [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0), we split it into training (46.7k) and testing set (2k). Try it now!!!
+- 2025.3.20: Release preprocessed data of [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) (add vertex normals in 3.22), we split it into training (46.7k) and testing set (2k). Try it now!!!
 - 2025.2.27: MagicArticulate was accepted by CVPR2025, see you in Nashville! Data and code are coming soon—stay tuned! 🚀
 - 2025.2.16: Release [paper](https://arxiv.org/abs/2502.12135), metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) and data visualization codes!
 
@@ -74,7 +74,7 @@ uuid,source,vertex_count,face_count,joint_count,bone_count,category_label,fileTy
 ### Preprocessed data
 We provide the preprocessed data that saved in NPZ files, which contain the following information:
 ```
-'vertices', 'faces', 'joints', 'bones', 'root_index', 'uuid', 'pc_w_norm', 'joint_names', 'skinning_weights_value', 'skinning_weights_row', 'skinning_weights_col', 'skinning_weights_shape'
+'vertices', 'faces', 'normals', 'joints', 'bones', 'root_index', 'uuid', 'pc_w_norm', 'joint_names', 'skinning_weights_value', 'skinning_weights_row', 'skinning_weights_col', 'skinning_weights_shape'
 ```
 Check [here](https://github.com/Seed3D/MagicArticulate/tree/main/data_utils) to see how to read and how we save it.
 

@@ -18,12 +18,15 @@ import os
 import numpy as np
 import scipy.sparse as sp
 
-def export_obj(vertices, faces, output_path):
+def export_obj(vertices, faces, normals, output_path):
     with open(output_path, 'w') as f:
         for v in vertices:
             f.write(f"v {v[0]} {v[1]} {v[2]}\n")
-        for face in faces:
-            f.write(f"f {face[0]+1} {face[1]+1} {face[2]+1}\n")
+        for n in normals:
+            f.write(f"vn {n[0]} {n[1]} {n[2]}\n")
+        for i, face in enumerate(faces):
+            # OBJ format is 1-based, so we add 1 to all indices
+            f.write(f"f {face[0]+1}//{face[0]+1} {face[1]+1}//{face[1]+1} {face[2]+1}//{face[2]+1}\n")
 
 def export_rig_txt(joints, bones, root_index, joint_names, skinning_weights, output_path):
     """
@@ -77,11 +80,12 @@ if __name__ == "__main__":
 
     model_data = data_list[0]
     print("Data keys:", model_data.keys())
-    # 'vertices', 'faces', 'joints', 'bones', 'root_index', 'uuid', 'joint_names',
+    # 'vertices', 'faces', 'normals', 'joints', 'bones', 'root_index', 'uuid', 'joint_names',
     # 'skinning_weights_value', 'skinning_weights_row', 'skinning_weights_col', 'skinning_weights_shape'
 
     vertices = model_data['vertices']          # (n_vertex, 3)
     faces = model_data['faces']                # (n_faces, 3)
+    normals = model_data['normals']            # (n_vertex, 3)
     joints = model_data['joints']              # (n_joints, 3)
     bones = model_data['bones']                # (n_bones, 2)
     root_index = model_data['root_index']      # int
@@ -96,7 +100,7 @@ if __name__ == "__main__":
     skinning_weights = skin_sparse.toarray()  # (n_vertex, n_joints)
 
     obj_path = f"{uuid_str}.obj" 
-    export_obj(vertices, faces, obj_path)
+    export_obj(vertices, faces, normals, obj_path)
     rig_txt_path = f"{uuid_str}.txt"
     export_rig_txt(joints, bones, root_index, joint_names, skinning_weights, rig_txt_path)
 

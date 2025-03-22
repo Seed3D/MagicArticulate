@@ -27,19 +27,23 @@ import scipy.sparse as sp
 def read_obj_file(file_path):
     vertices = []
     faces = []
+    normals = []  # Added normals list
     
     with open(file_path, 'r') as file:
         for line in file:
             if line.startswith('v '):
                 parts = line.split()[1:]
                 vertices.append([float(parts[0]), float(parts[1]), float(parts[2])])
+            elif line.startswith('vn '):  # Added reading normals
+                parts = line.split()[1:]
+                normals.append([float(parts[0]), float(parts[1]), float(parts[2])])
             elif line.startswith('f '):
                 parts = line.split()[1:]
                 # OBJ format is 1-based, we need 0-based for npz
                 face = [int(part.split('//')[0]) - 1 for part in parts]
                 faces.append(face)
     
-    return np.array(vertices), np.array(faces)
+    return np.array(vertices), np.array(faces), np.array(normals) 
 
 def read_rig_file(file_path):
     """
@@ -110,7 +114,7 @@ def convert_to_sparse_skinning(skinning_data, num_vertices, num_joints):
     # Return as tuple of arrays which can be serialized
     return (sparse_skinning.data, sparse_skinning.row, sparse_skinning.col, sparse_skinning.shape)
 
-def normalize_to_unit_cube(vertices, scale_factor=1.0):
+def normalize_to_unit_cube(vertices, normals=None, scale_factor=1.0):
     min_coords = vertices.min(axis=0)
     max_coords = vertices.max(axis=0)
     center = (max_coords + min_coords) / 2.0
@@ -119,7 +123,14 @@ def normalize_to_unit_cube(vertices, scale_factor=1.0):
     scale = 1.0 / np.abs(vertices).max() * scale_factor
     vertices *= scale
     
-    return vertices, center, scale
+    if normals is not None:
+        # Normalize each normal vector to unit length
+        norms = np.linalg.norm(normals, axis=1, keepdims=True)
+        normals = normals / (norms+1e-8)
+    
+        return vertices, normals, center, scale
+    else:
+        return vertices, center, scale
 
 def normalize_vertices(vertices, scale=0.9):
     bbmin, bbmax = vertices.min(0), vertices.max(0)
@@ -161,7 +172,7 @@ def process_mesh_to_pc(mesh, marching_cubes = True, sample_num = 8192):
         mesh = export_to_watertight(mesh)
     return_mesh = mesh
     points, face_idx = mesh.sample(sample_num, return_index=True)
-    points, _, _ = normalize_to_unit_cube(points, 0.9995)
+    points, _, _ = normalize_to_unit_cube(points, scale_factor=0.9995)
     normals = mesh.face_normals[face_idx]
 
     pc_normal = np.concatenate([points, normals], axis=-1, dtype=np.float16)
@@ -176,12 +187,12 @@ def process_single_file(args):
         print(f"Skipping files {mesh_file} and {rig_file} because their names do not match.")
         return None
     
-    vertices, faces = read_obj_file(mesh_file)
+    vertices, faces, normals = read_obj_file(mesh_file)
 
     joints, bones, root, joint_names, skinning_data = read_rig_file(rig_file)
 
     # Normalize the mesh to the unit cube centered at the origin
-    vertices, center, scale = normalize_to_unit_cube(vertices, scale_factor=0.5)
+    vertices, normals, center, scale = normalize_to_unit_cube(vertices, normals, scale_factor=0.5)
     
     # Apply the same transformation to joints
     joints -= center
@@ -199,6 +210,7 @@ def process_single_file(args):
     return {
         'vertices': vertices,
         'faces': faces,
+        'normals': normals,
         'joints': joints,
         'bones': bones,
         'root_index': root,

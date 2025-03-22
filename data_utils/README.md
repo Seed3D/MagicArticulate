@@ -1,7 +1,7 @@
 ## Preprocessed data
 We provide the preprocessed data that saved in NPZ files, which contain the following information:
 ```
-'vertices', 'faces', 'joints', 'bones', 'root_index', 'uuid', 'pc_w_norm', 'joint_names', 'skinning_weights_value', 'skinning_weights_rows', 'skinning_weights_cols', 'skinning_weights_shape'
+'vertices', 'faces', 'normals', 'joints', 'bones', 'root_index', 'uuid', 'pc_w_norm', 'joint_names', 'skinning_weights_value', 'skinning_weights_rows', 'skinning_weights_cols', 'skinning_weights_shape'
 ```
 You can check `read_npz.py` for how to read the NPZ files and `save_npz.py` for how we save them.
 

@@ -20,13 +20,14 @@ data_list = data['arr_0']
 
 print(f"Loaded {len(data_list)} data entries")
 print(f"Data keys: {data_list[0].keys()}")
-# 'vertices', 'faces', 'joints', 'bones', 'root_index', 'uuid', 'pc_w_norm', 'joint_names', 'skinning_weights_value', 
+# 'vertices', 'faces', 'normals', 'joints', 'bones', 'root_index', 'uuid', 'pc_w_norm', 'joint_names', 'skinning_weights_value', 
 # 'skinning_weights_row', 'skinning_weights_col', 'skinning_weights_shape'
 
 data = data_list[0] # check the first data
 
 vertices = data['vertices'] # (n_vertex, 3)
 faces = data['faces'] # (n_faces, 3)
+normals = data['normals'] # (n_vertex, 3)
 joints = data['joints'] # (n_joints, 3)
 bones = data['bones'] # (n_bones, 2)
 pc_w_norm = data['pc_w_norm'] # (8192, 6)
