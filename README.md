@@ -42,7 +42,7 @@
 <br />
 
 ## News
-- 2025.3.20: Release preprocessed data of [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) (add vertex normals in 3.22), we split it into training (46.7k) and testing set (2k). Try it now!!!
+- 2025.3.20: Release preprocessed data of [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) (add vertex normals), we split it into training (46.7k) and testing set (2k). Try it now!!!
 - 2025.2.27: MagicArticulate was accepted by CVPR2025, see you in Nashville! Data and code are coming soon—stay tuned! 🚀
 - 2025.2.16: Release [paper](https://arxiv.org/abs/2502.12135), metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) and data visualization codes!
 
