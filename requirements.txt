@@ -1,0 +1,10 @@
+trimesh==4.2.3
+accelerate==0.28.0
+mesh2sdf==1.1.0
+transformers==4.39.3
+numpy==1.26.4
+pyrender==0.1.45
+tqdm
+opencv-python==4.9.0.80
+omegaconf==2.3.0
+einops==0.7.0
