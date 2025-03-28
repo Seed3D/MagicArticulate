@@ -42,6 +42,7 @@
 <br />
 
 ## News
+- 2025.3.28: Release inference codes for skeleton generation, weights are coming.
 - 2025.3.20: Release preprocessed data of [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) (add vertex normals), we split it into training (46.7k) and testing set (2k). Try it now!!!
 - 2025.2.27: MagicArticulate was accepted by CVPR2025, see you in Nashville! Data and code are coming soon—stay tuned! 🚀
 - 2025.2.16: Release [paper](https://arxiv.org/abs/2502.12135), metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) and data visualization codes!
@@ -94,6 +95,36 @@ We provide two ways for sequence ordering: spatial and hierarchical sequence ord
 <p align="center">
   <img width="60%" src="assets/sequence_ordering_demo.gif"/>
 </p>
+
+### Installtation
+```
+git clone https://github.com/Seed3D/MagicArticulate.git --recursive && cd MagicArticulate
+conda create -n magicarti python==3.10.13 -y
+conda activate magicarti
+pip install torch==2.1.1 torchvision==0.16.1 torchaudio==2.1.1 --index-url https://download.pytorch.org/whl/cu118
+pip install -r requirements.txt
+pip install flash-attn==2.6.3 --no-build-isolation
+```
+Then download [checkpoints of Michelangelo](https://huggingface.co/Maikou/Michelangelo/tree/main/checkpoints/aligned_shape_latents):
+
+```
+python download.py
+```
+
+### Evaluation
+
+You can run the following command for evaluating our models on `Articulation2.0-test` and `ModelResource-test` from [RigNet](https://github.com/zhan-xu/RigNet). For your convenience, we also save ModelResource-test in our format. The inference process requires 4.6 GB of VRAM and takes 1–2 seconds per inference.
+
+```
+bash eval.sh
+```
+You can change `save_name` for different evaluation and check the quantitative results afterwards in `evaluate_results.txt`.
+
+### Demo
+We provide some examples to test our models by running the following command. You can also test our models on your 3D objects, remeber to change the `input_dir`.
+```
+bash demo.sh
+```
 
 ## Acknowledgment
 
