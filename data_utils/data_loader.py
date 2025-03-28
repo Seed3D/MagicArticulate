@@ -52,17 +52,32 @@ class DataLoader:
         mesh = trimesh.load(mesh_path, process=False)
         mesh.visual.vertex_colors[:, 3] = 100  # set transparency
         self.mesh = mesh
-        self.normalize_coordinates()
-
-    def normalize_coordinates(self):
+        
+        # Compute the centroid normal of the mesh
         v = self.mesh.vertices
         xmin, ymin, zmin = v.min(axis=0)
         xmax, ymax, zmax = v.max(axis=0)
         self.bbox_center = np.array([(xmax + xmin)/2, (ymax + ymin)/2, (zmax + zmin)/2])
-        self.bbox_size = max(xmax - xmin, ymax - ymin, zmax - zmin)
+        self.bbox_size = np.array([xmax - xmin, ymax - ymin, zmax - zmin])
+        self.bbox_scale = max(xmax - xmin, ymax - ymin, zmax - zmin)
 
+        normal = mesh.center_mass - self.bbox_center
+        normal = normal / (np.linalg.norm(normal)+1e-5)
+
+        # Choose axis order based on normal direction
+        if abs(normal[1]) > abs(normal[2]):  # if Y component is dominant
+            self.axis_order = [0, 1, 2]  # swapping Y and Z
+        else:
+            self.axis_order =[0, 2, 1]  # keep default order
+
+        self.mesh.vertices = self.mesh.vertices[:, self.axis_order]
+        self.joints = self.joints[:, self.axis_order]
+        self.normalize_coordinates()
+
+    def normalize_coordinates(self):
+        
         # Compute scale and offset
-        scale = 1.0 / (self.bbox_size+1e-5)
+        scale = 1.0 / (self.bbox_scale+1e-5)
         offset = -self.bbox_center
 
         self.mesh.vertices = (self.mesh.vertices + offset) * scale
