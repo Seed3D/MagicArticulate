@@ -106,7 +106,7 @@ python download.py
 
 ### Evaluation
 
-You can run the following command for evaluating our models on `Articulation2.0-test` and `ModelResource-test` from [RigNet](https://github.com/zhan-xu/RigNet). For your convenience, we also save ModelResource-test in our format. The inference process requires 4.6 GB of VRAM and takes 1–2 seconds per inference.
+You can run the following command for evaluating our models on `Articulation2.0-test` and `ModelResource-test` from [RigNet](https://github.com/zhan-xu/RigNet). For your convenience, we also save ModelResource-test in our format (download it [here](https://www.dropbox.com/scl/fi/iv6jjka3s2j91i3l2fxt9/modelsresource_test.npz?rlkey=ptk49kz7e163xl50sh5kdm3wv&st=ago6ifsc&dl=0)). The inference process requires 4.6 GB of VRAM and takes 1–2 seconds per inference.
 
 ```
 bash eval.sh
