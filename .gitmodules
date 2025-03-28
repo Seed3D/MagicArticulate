@@ -1,0 +1,3 @@
+[submodule "third_party/Michelangelo"]
+	path = third_party/Michelangelo
+	url = https://github.com/ChaoyueSong/Michelangelo.git

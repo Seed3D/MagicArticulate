@@ -47,13 +47,6 @@
 - 2025.2.27: MagicArticulate was accepted by CVPR2025, see you in Nashville! Data and code are coming soon—stay tuned! 🚀
 - 2025.2.16: Release [paper](https://arxiv.org/abs/2502.12135), metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) and data visualization codes!
 
-## TODO
-
-- [x] Release Articulation-XL metadata.
-- [x] Release Articulation-XL preprocessed data (a NPZ file includes vertices, faces, joints, bones, skinning weights, uuid, etc.).
-- [ ] Release pretrained models and inference code.
-- [ ] Release training code.
-
 ## Dataset: Articulation-XL2.0
 ### Overview
 We introduce <b>Articulation-XL2.0</b>, a large-scale dataset featuring over <b>48K</b> 3D models with high-quality articulation annotations, filtered from Objaverse-XL. Compared to version 1.0, Articulation-XL2.0 includes 3D models with multiple components. For further details, please refer to the statistics below.
