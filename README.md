@@ -42,7 +42,8 @@
 <br />
 
 ## News
-- 2025.3.28: Release inference codes for skeleton generation, weights are coming.
+- 2025.4.16: Release [weights](https://huggingface.co/Seed3D/MagicArticulate) for skeleton generation.
+- 2025.3.28: Release inference codes for skeleton generation.
 - 2025.3.20: Release preprocessed data of [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) (add vertex normals), we split it into training (46.7k) and testing set (2k). Try it now!!!
 - 2025.2.27: MagicArticulate was accepted by CVPR2025, see you in Nashville! Data and code are coming soon—stay tuned! 🚀
 - 2025.2.16: Release [paper](https://arxiv.org/abs/2502.12135), metadata for [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) and data visualization codes!
@@ -98,7 +99,7 @@ pip install torch==2.1.1 torchvision==0.16.1 torchaudio==2.1.1 --index-url https
 pip install -r requirements.txt
 pip install flash-attn==2.6.3 --no-build-isolation
 ```
-Then download [checkpoints of Michelangelo](https://huggingface.co/Maikou/Michelangelo/tree/main/checkpoints/aligned_shape_latents):
+Then download [checkpoints of Michelangelo](https://huggingface.co/Maikou/Michelangelo/tree/main/checkpoints/aligned_shape_latents) and our [released weights](https://huggingface.co/Seed3D/MagicArticulate) for skeleton generation:
 
 ```
 python download.py
@@ -106,12 +107,70 @@ python download.py
 
 ### Evaluation
 
-You can run the following command for evaluating our models on `Articulation2.0-test` and `ModelResource-test` from [RigNet](https://github.com/zhan-xu/RigNet). For your convenience, we also save ModelResource-test in our format (download it [here](https://www.dropbox.com/scl/fi/iv6jjka3s2j91i3l2fxt9/modelsresource_test.npz?rlkey=ptk49kz7e163xl50sh5kdm3wv&st=ago6ifsc&dl=0)). The inference process requires 4.6 GB of VRAM and takes 1–2 seconds per inference.
+You can run the following command for evaluating our models on `Articulation-XL2.0-test` and `ModelResource-test` from [RigNet](https://github.com/zhan-xu/RigNet). For your convenience, we also save ModelResource-test in our format (download it [here](https://www.dropbox.com/scl/fi/iv6jjka3s2j91i3l2fxt9/modelsresource_test.npz?rlkey=ptk49kz7e163xl50sh5kdm3wv&st=ago6ifsc&dl=0)). The inference process requires 4.6 GB of VRAM and takes 1–2 seconds per inference.
 
 ```
 bash eval.sh
 ```
 You can change `save_name` for different evaluation and check the quantitative results afterwards in `evaluate_results.txt`.
+
+These are the numbers that you should be able to reproduce using the released weights and the current version of the codebase:
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2">Test set</th>
+      <th colspan="3">Articulation-XL2.0-test</th>
+      <th colspan="3">ModelResource-test</th>
+    </tr>
+    <tr>
+      <th>CD-J2J</th>
+      <th>CD-J2B</th>
+      <th>CD-B2B</th>
+      <th>CD-J2J</th>
+      <th>CD-J2B</th>
+      <th>CD-B2B</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Paper (train on 1.0, spatial)</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td>4.103</td>
+      <td>3.101</td>
+      <td>2.672</td>
+    </tr>
+    <tr>
+      <td>Paper (train on 1.0, hier)</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+      <td>4.451</td>
+      <td>3.454</td>
+      <td>2.998</td>
+    </tr>
+    <tr>
+      <td>train on Arti-XL2.0 (spatial)</td>
+	  <td><b>3.043</b></td>
+      <td><b>2.293</b></td>
+      <td><b>1.953</b></td>
+      <td><b>3.936</b></td>
+      <td><b>2.979</b></td>
+      <td><b>2.588</b></td>
+    </tr>
+    <tr>
+      <td>train on Arti-XL2.0 (hier)</td>
+      <td>3.417</td>
+      <td>2.692</td>
+      <td>2.281</td>
+      <td>4.116</td>
+      <td>3.124</td>
+      <td>2.704</td>
+    </tr>
+  </tbody>
+</table>
+The performance comparison between models trained on Articulation-XL1.0 versus 2.0 demonstrates the importance of dataset scaling with high quality. If you wish to compare your methods with MagicArticulate trained on Articulation-XL2.0, you may reference these results as a baseline for comparison.
 
 ### Demo
 We provide some examples to test our models by running the following command. You can also test our models on your 3D objects, remeber to change the `input_dir`.
