@@ -1,5 +1,5 @@
 CUDA_VISIBLE_DEVICES=0 python evaluate.py --dataset_path articulation_xlv2_test.npz \
-            --pretrained_weights skeleton_ckpt/ckpt_trainonv2_hier.pth \
+            --pretrained_weights skeleton_ckpt/checkpoint_trainonv2_hier.pth \
             --save_name infer_results_xl --input_pc_num 8192 \
             --save_render --hier_order
 
