@@ -42,6 +42,7 @@
 <br />
 
 ## News
+- 2025.4.18: We have updated the preprocessed dataset to exclude entries with skinning issues (118 from the training and 3 from the test, whose skinning weight row sums fell below 1) and duplicated joint names (2 from the training). You can download the [cleaned data](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) again or update it yourself by running: `python data_utils/update_npz_rm_issue_data.py`. Still remember to normalize skinning weights in your dataloader.
 - 2025.4.16: Release [weights](https://huggingface.co/Seed3D/MagicArticulate) for skeleton generation.
 - 2025.3.28: Release inference codes for skeleton generation.
 - 2025.3.20: Release preprocessed data of [Articulation-XL2.0](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) (add vertex normals), we split it into training (46.7k) and testing set (2k). Try it now!!!
@@ -186,10 +187,10 @@ We appreciate the insightful discussions with [Zhan Xu](https://github.com/zhan-
 ## Citation
 
 ```
-@article{song2025magicarticulate,
+@inproceedings{song2025magicarticulate,
       title={MagicArticulate: Make Your 3D Models Articulation-Ready}, 
       author={Chaoyue Song and Jianfeng Zhang and Xiu Li and Fan Yang and Yiwen Chen and Zhongcong Xu and Jun Hao Liew and Xiaoyang Guo and Fayao Liu and Jiashi Feng and Guosheng Lin},
-      journal={arXiv preprint arXiv:2502.12135},
-      year={2025}
+      booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+      year={2025},
 }
 ```
