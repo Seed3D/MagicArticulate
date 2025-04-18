@@ -115,7 +115,7 @@ bash eval.sh
 ```
 You can change `save_name` for different evaluation and check the quantitative results afterwards in `evaluate_results.txt`.
 
-These are the numbers that you should be able to reproduce using the released weights and the current version of the codebase:
+These are the numbers (the metrics are in units of 10−2) that you should be able to reproduce using the released weights and the current version of the codebase:
 <table>
   <thead>
     <tr>
