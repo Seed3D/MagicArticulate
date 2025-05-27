@@ -127,14 +127,14 @@ if __name__ == "__main__":
                 avg_j2j_cd += j2j_cd
                 avg_j2b_cd += j2b_cd 
                 avg_b2b_cd += b2b_cd
-            print(f"For {batch_data_label['file_name'][0]}, J2J Chamfer Distance: {j2j_cd}, J2B Chamfer Distance: {j2b_cd}, B2B Chamfer Distance: {b2b_cd}")
+            print(f"For {batch_data_label['uuid'][0]}, J2J Chamfer Distance: {j2j_cd}, J2B Chamfer Distance: {j2b_cd}, B2B Chamfer Distance: {b2b_cd}")
             with open(results_file, 'a') as f:
-                f.write(f"For {batch_data_label['file_name'][0]}, J2J Chamfer Distance: {j2j_cd}, J2B Chamfer Distance: {j2b_cd}, B2B Chamfer Distance: {b2b_cd}\n")
+                f.write(f"For {batch_data_label['uuid'][0]}, J2J Chamfer Distance: {j2j_cd}, J2B Chamfer Distance: {j2b_cd}, B2B Chamfer Distance: {b2b_cd}\n")
         
         if len(gt_samples) <= 30: # change this as needed
             gt_root_index = int(batch_data_label['root_index'][0])
             pred_samples.append((pred_joints, pred_bones, pred_root_index))
-            gt_samples.append((gt_joints, gt_bones, batch_data_label['vertices'][0], batch_data_label['faces'][0], batch_data_label['file_name'][0], gt_root_index))
+            gt_samples.append((gt_joints, gt_bones, batch_data_label['vertices'][0], batch_data_label['faces'][0], batch_data_label['uuid'][0], gt_root_index))
         
     with open(results_file, 'a') as f:
         f.write(f"Average J2J Chamfer Distance: {avg_j2j_cd/num_valid}\n")
