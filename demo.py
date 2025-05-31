@@ -181,7 +181,7 @@ if __name__ == "__main__":
         # pred_root_index = pred_bones[0][0]
         # when save rig to txt, denormalize the skeletons to the same scale with input meshes
         pred_joints_denorm = pred_joints * scale + trans
-        save_skeleton_to_txt(pred_joints_denorm, pred_bones, args.hier_order, vertices, pred_rig_filename)
+        save_skeleton_to_txt(pred_joints_denorm, pred_bones, pred_root_index, args.hier_order, vertices, pred_rig_filename)
         
         # save skeletons
         if args.hier_order:

@@ -104,7 +104,7 @@ def remove_duplicate_joints(joints, bones, root_index=None):
         return new_joints, new_bones
 
 
-def save_skeleton_to_txt(pred_joints, pred_bones, hier_order, vertices, filename='skeleton.txt'):
+def save_skeleton_to_txt(pred_joints, pred_bones, pred_root_index, hier_order, vertices, filename='skeleton.txt'):
     """
     save skeleton to txt file, the format follows Rignet (joints, root, hier)
     
@@ -125,7 +125,7 @@ def save_skeleton_to_txt(pred_joints, pred_bones, hier_order, vertices, filename
     
     # find root joint
     if hier_order:
-        root_idx = pred_bones[0, 0]
+        root_idx = pred_root_index
     else:
         centroid = np.mean(vertices, axis=0)
         distances = np.linalg.norm(pred_joints - centroid, axis=1)
