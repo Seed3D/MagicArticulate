@@ -71,7 +71,7 @@ class SkeletonData(Dataset):
         data_dict['pc_normal'] = torch.from_numpy(np.concatenate([pc_coor, normal], axis=-1).astype(np.float16))
         data_dict['vertices'] = torch.from_numpy(data['vertices'].astype(np.float16))
         data_dict['faces'] = torch.from_numpy(data['faces'].astype(np.int64))
-        data_dict['file_name'] = data['file_name']
+        data_dict['uuid'] = data['uuid']
         data_dict['root_index'] = str(data['root_index'])
    
         return data_dict
