@@ -110,9 +110,10 @@ if __name__ == "__main__":
             num_valid += 1
             pred_joints, pred_bones = pred_joints_and_bones(pred_bone_coords.cpu().numpy().squeeze())
             if args.hier_order: # remove duplicate joints
-                pred_joints, pred_bones, pred_root_index = remove_duplicate_joints(pred_joints, pred_bones, root_index=pred_bones[0][0])
+                pred_root_index = pred_bones[0][0]
+                # pred_joints, pred_bones, pred_root_index = remove_duplicate_joints(pred_joints, pred_bones, root_index=pred_bones[0][0])
             else:
-                pred_joints, pred_bones = remove_duplicate_joints(pred_joints, pred_bones)
+                # pred_joints, pred_bones = remove_duplicate_joints(pred_joints, pred_bones)
                 pred_root_index = None
             
             ### calculate CD
@@ -153,7 +154,7 @@ if __name__ == "__main__":
         faces = faces.cpu().numpy()
         
         # save skeleton to .txt
-        save_skeleton_to_txt(pred_joints, pred_bones, args.hier_order, vertices=vertices, filename=pred_rig_filename)
+        save_skeleton_to_txt(pred_joints, pred_bones, pred_root_index, args.hier_order, vertices=vertices, filename=pred_rig_filename)
         
         # save skeletons
         if args.hier_order:
