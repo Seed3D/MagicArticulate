@@ -187,10 +187,12 @@ We appreciate the insightful discussions with [Zhan Xu](https://github.com/zhan-
 ## Citation
 
 ```
-@inproceedings{song2025magicarticulate,
-      title={MagicArticulate: Make Your 3D Models Articulation-Ready}, 
-      author={Chaoyue Song and Jianfeng Zhang and Xiu Li and Fan Yang and Yiwen Chen and Zhongcong Xu and Jun Hao Liew and Xiaoyang Guo and Fayao Liu and Jiashi Feng and Guosheng Lin},
-      booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
-      year={2025},
+@InProceedings{Song_2025_CVPR,
+    author    = {Song, Chaoyue and Zhang, Jianfeng and Li, Xiu and Yang, Fan and Chen, Yiwen and Xu, Zhongcong and Liew, Jun Hao and Guo, Xiaoyang and Liu, Fayao and Feng, Jiashi and Lin, Guosheng},
+    title     = {MagicArticulate: Make Your 3D Models Articulation-Ready},
+    booktitle = {Proceedings of the Computer Vision and Pattern Recognition Conference (CVPR)},
+    month     = {June},
+    year      = {2025},
+    pages     = {15998-16007}
 }
 ```
