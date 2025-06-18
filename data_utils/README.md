@@ -35,3 +35,9 @@ You will obtain the following outputs:
   <img width="80%" src="examples/0a59c5ffa4a1476bac6d540b79947f31_render_results.png"/>
 </p>
 
+### Reading rig and mesh from GLBs
+We provide the script we use for reading rig (.txt) and mesh (.obj) from glb files. You can run:
+```
+python read_rig_mesh_from_glb.py
+```
+Remember to download Blender (we use 4.2.0) and also bpy in your conda environment.
