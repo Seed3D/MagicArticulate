@@ -4,7 +4,7 @@
 
 <p>
   <a href="https://chaoyuesong.github.io"><strong>Chaoyue Song</strong></a><sup>1,2</sup>,
-  <a href="http://jeff95.me/"><strong>Jianfeng Zhang</strong></a><sup>2*</sup>,
+  <a href="https://jfzhang95.github.io/"><strong>Jianfeng Zhang</strong></a><sup>2*</sup>,
   <a href="https://lixiulive.com/"><strong>Xiu Li</strong></a><sup>2</sup>,
   <a href="https://scholar.google.com/citations?user=afDvaa8AAAAJ&hl"><strong>Fan Yang</strong></a><sup>1</sup>,
   <a href="https://buaacyw.github.io/"><strong>Yiwen Chen</strong></a><sup>1</sup>,
