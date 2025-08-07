@@ -42,6 +42,7 @@
 <br />
 
 ## News
+- 2025.8.07: We updated the [skeleton generation weights](https://huggingface.co/Seed3D/MagicArticulate) to fix a training data loader normalization bug causing mesh-skeleton misalignment. Check [here](https://github.com/Seed3D/MagicArticulate/tree/main/assets/skeleton_compare.png) for an example.
 - 2025.6.18: We release the blender script for reading rig (.txt) and mesh (.obj) from GLB files.
 - 2025.4.18: We have updated the preprocessed dataset to exclude entries with skinning issues (118 from the training and 3 from the test, whose skinning weight row sums fell below 1) and duplicated joint names (2 from the training). You can download the [cleaned data](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) again or update it yourself by running: `python data_utils/update_npz_rm_issue_data.py`. Still remember to normalize skinning weights in your dataloader.
 - 2025.4.16: Release [weights](https://huggingface.co/Seed3D/MagicArticulate) for skeleton generation.
@@ -154,21 +155,21 @@ These are the numbers (the metrics are in units of 10−2) that you should be ab
     </tr>
     <tr>
       <td>train on Arti-XL2.0 (spatial)</td>
-	  <td><b>3.043</b></td>
-      <td><b>2.293</b></td>
-      <td><b>1.953</b></td>
-      <td><b>3.936</b></td>
-      <td><b>2.979</b></td>
-      <td><b>2.588</b></td>
+	  <td><b>3.034</b></td>
+      <td><b>2.263</b></td>
+      <td><b>1.910</b></td>
+      <td><b>3.999</b></td>
+      <td><b>3.027</b></td>
+      <td><b>2.591</b></td>
     </tr>
     <tr>
       <td>train on Arti-XL2.0 (hier)</td>
-      <td>3.417</td>
-      <td>2.692</td>
-      <td>2.281</td>
-      <td>4.116</td>
-      <td>3.124</td>
-      <td>2.704</td>
+      <td>3.264</td>
+      <td>2.503</td>
+      <td>2.123</td>
+      <td>4.114</td>
+      <td>3.137</td>
+      <td>2.693</td>
     </tr>
   </tbody>
 </table>
