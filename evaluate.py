@@ -13,6 +13,7 @@
 #  limitations under the License.
 import os
 import math
+import time
 import torch
 import argparse
 import numpy as np
@@ -25,7 +26,7 @@ from accelerate.utils import DistributedDataParallelKwargs
 from skeleton_models.skeletongen import SkeletonGPT
 from utils.skeleton_data_loader import SkeletonData
 from utils.save_utils import save_mesh, pred_joints_and_bones, save_skeleton_to_txt, save_args, \
-                       remove_duplicate_joints, save_skeleton_obj, render_mesh_with_skeleton
+                       merge_duplicate_joints_and_fix_bones, save_skeleton_obj, render_mesh_with_skeleton
 from utils.eval_utils import chamfer_dist, joint2bone_chamfer_dist, bone2bone_chamfer_dist
     
 
@@ -92,12 +93,16 @@ if __name__ == "__main__":
     
     gt_samples, pred_samples = [], []
     avg_j2j_cd, avg_j2b_cd, avg_b2b_cd = 0.0, 0.0, 0.0
+    infer_all_time = []
     num_valid = 0
     results_file = f'{output_dir}/evaluate_results.txt'
     
     for curr_iter, batch_data_label in tqdm(enumerate(dataloader), total=len(dataloader)):
+        start_time = time.time()
         with accelerator.autocast():
             pred_bone_coords = model.generate(batch_data_label)
+        infer_time_pre_mesh = time.time() - start_time
+        infer_all_time.append(infer_time_pre_mesh)
             
         if pred_bone_coords is None:
             continue
@@ -107,14 +112,22 @@ if __name__ == "__main__":
             gt_joints = batch_data_label['joints'].squeeze(0).cpu().numpy()
             gt_bones = batch_data_label['bones'].squeeze(0).cpu().numpy()
             
-            num_valid += 1
-            pred_joints, pred_bones = pred_joints_and_bones(pred_bone_coords.cpu().numpy().squeeze())
-            if args.hier_order: # remove duplicate joints
+            pred_joints, pred_bones = pred_joints_and_bones(pred_bone_coords.cpu().numpy().squeeze(0))
+            if pred_bones.shape[0] == 0:
+                continue
+            # Post process: merge duplicate or nearby joints and deduplicate bones.
+            if args.hier_order:
                 pred_root_index = pred_bones[0][0]
-                # pred_joints, pred_bones, pred_root_index = remove_duplicate_joints(pred_joints, pred_bones, root_index=pred_bones[0][0])
+                pred_joints, pred_bones, pred_root_index = merge_duplicate_joints_and_fix_bones(pred_joints, pred_bones, root_index=pred_root_index) 
             else:
-                # pred_joints, pred_bones = remove_duplicate_joints(pred_joints, pred_bones)
+                pred_joints, pred_bones = merge_duplicate_joints_and_fix_bones(pred_joints, pred_bones)
                 pred_root_index = None
+            
+            gt_root_index = int(batch_data_label['root_index'][0])
+            gt_joints, gt_bones, gt_root_index = merge_duplicate_joints_and_fix_bones(gt_joints, gt_bones, root_index=gt_root_index) # also merge duplicate joints/bones for GT to prevent NaNs in CD computation.
+
+            if gt_bones.shape[0] == 0 or pred_bones.shape[0] == 0:
+                continue
             
             ### calculate CD
             j2j_cd = chamfer_dist(pred_joints, gt_joints) 
@@ -122,29 +135,29 @@ if __name__ == "__main__":
             b2b_cd = bone2bone_chamfer_dist(pred_joints, pred_bones, gt_joints, gt_bones)
             
             if math.isnan(j2j_cd) or math.isnan(j2b_cd) or math.isnan(b2b_cd):
-                num_valid-=1
-                continue
+                print("NaN cd")
             else:
+                num_valid += 1
                 avg_j2j_cd += j2j_cd
                 avg_j2b_cd += j2b_cd 
                 avg_b2b_cd += b2b_cd
-            print(f"For {batch_data_label['uuid'][0]}, J2J Chamfer Distance: {j2j_cd}, J2B Chamfer Distance: {j2b_cd}, B2B Chamfer Distance: {b2b_cd}")
-            with open(results_file, 'a') as f:
-                f.write(f"For {batch_data_label['uuid'][0]}, J2J Chamfer Distance: {j2j_cd}, J2B Chamfer Distance: {j2b_cd}, B2B Chamfer Distance: {b2b_cd}\n")
-        
-        if len(gt_samples) <= 30: # change this as needed
-            gt_root_index = int(batch_data_label['root_index'][0])
+                print(f"For {batch_data_label['uuid'][0]}, J2J Chamfer Distance: {j2j_cd:.7f}, J2B Chamfer Distance: {j2b_cd:.7f}, B2B Chamfer Distance: {b2b_cd:.7f}, infer time: {infer_time_pre_mesh:.7f}")
+                with open(results_file, 'a') as f:
+                    f.write(f"For {batch_data_label['uuid'][0]}, J2J Chamfer Distance: {j2j_cd:.7f}, J2B Chamfer Distance: {j2b_cd:.7f}, B2B Chamfer Distance: {b2b_cd:.7f}, infer time: {infer_time_pre_mesh:.7f}\n")
+            
+        if len(gt_samples) <= 30: # only save the first 30 results now, change to 2000 to save all
             pred_samples.append((pred_joints, pred_bones, pred_root_index))
-            gt_samples.append((gt_joints, gt_bones, batch_data_label['vertices'][0], batch_data_label['faces'][0], batch_data_label['uuid'][0], gt_root_index))
+            gt_samples.append((gt_joints, gt_bones, batch_data_label['vertices'][0], batch_data_label['faces'][0], batch_data_label['transform_params'][0], batch_data_label['uuid'][0], gt_root_index))
         
     with open(results_file, 'a') as f:
-        f.write(f"Average J2J Chamfer Distance: {avg_j2j_cd/num_valid}\n")
-        f.write(f"Average J2B Chamfer Distance: {avg_j2b_cd/num_valid}\n")
-        f.write(f"Average B2B Chamfer Distance: {avg_b2b_cd/num_valid}\n")
-    print(f"Valid generation: {num_valid}, Average J2J Chamfer Distance: {avg_j2j_cd/num_valid}, average J2B Chamfer Distance: {avg_j2b_cd/num_valid}, average B2B Chamfer Distance: {avg_b2b_cd/num_valid}")
+        f.write(f"Average J2J Chamfer Distance: {avg_j2j_cd/num_valid:.7f}\n")
+        f.write(f"Average J2B Chamfer Distance: {avg_j2b_cd/num_valid:.7f}\n")
+        f.write(f"Average B2B Chamfer Distance: {avg_b2b_cd/num_valid:.7f}\n")
+        f.write(f"Average inference time: {np.mean(infer_all_time):.7f}\n")
+    print(f"Valid generation: {num_valid}, Average J2J Chamfer Distance: {avg_j2j_cd/num_valid:.7f}, average J2B Chamfer Distance: {avg_j2b_cd/num_valid:.7f}, average B2B Chamfer Distance: {avg_b2b_cd/num_valid:.7f}, average infer time: {np.mean(infer_all_time):.7f}")
 
     # save results
-    for i, ((pred_joints, pred_bones, pred_root_index), (gt_joints, gt_bones, vertices, faces, file_name, gt_root_index)) in enumerate(zip(pred_samples, gt_samples)):
+    for i, ((pred_joints, pred_bones, pred_root_index), (gt_joints, gt_bones, vertices, faces, transform_params, file_name, gt_root_index)) in enumerate(zip(pred_samples, gt_samples)):
         pred_skel_filename = f'{output_dir}/{file_name}_skel_pred.obj'
         gt_skel_filename = f'{output_dir}/{file_name}_skel_gt.obj'
         mesh_filename = f'{output_dir}/{file_name}.obj'
@@ -152,9 +165,16 @@ if __name__ == "__main__":
         
         vertices = vertices.cpu().numpy()
         faces = faces.cpu().numpy()
+        trans = transform_params[:3].cpu().numpy()
+        scale = transform_params[3].cpu().numpy()
+        pc_trans = transform_params[4:7].cpu().numpy()
+        pc_scale = transform_params[7].cpu().numpy()
         
-        # save skeleton to .txt
-        save_skeleton_to_txt(pred_joints, pred_bones, pred_root_index, args.hier_order, vertices=vertices, filename=pred_rig_filename)
+        # save skeleton to .txt, denormalize the skeletons to align with input meshes
+        pred_joints_denorm = pred_joints * pc_scale + pc_trans # first align with point cloud
+        pred_joints_denorm = pred_joints_denorm / scale + trans # then align with original mesh
+        
+        save_skeleton_to_txt(pred_joints_denorm, pred_bones, pred_root_index, args.hier_order, vertices=vertices, filename=pred_rig_filename)
         
         # save skeletons
         if args.hier_order:
@@ -164,13 +184,16 @@ if __name__ == "__main__":
         save_skeleton_obj(gt_joints, gt_bones, gt_skel_filename, gt_root_index, use_cone=True)
         
         # save mesh
-        save_mesh(vertices, faces, mesh_filename)
+        # when saving mesh and rendering, use normalized vertices (-0.5,0.5)
+        vertices_norm = (vertices - trans) * scale
+        vertices_norm = (vertices_norm - pc_trans) / pc_scale
+        save_mesh(vertices_norm, faces, mesh_filename)
         
         # render mesh w/ skeleton
         if args.save_render:
             if args.hier_order:
-                render_mesh_with_skeleton(pred_joints, pred_bones, vertices, faces, output_dir, file_name, prefix='pred', root_idx=pred_root_index)
+                render_mesh_with_skeleton(pred_joints, pred_bones, vertices_norm, faces, output_dir, file_name, prefix='pred', root_idx=pred_root_index)
             else:
-                render_mesh_with_skeleton(pred_joints, pred_bones, vertices, faces, output_dir, file_name, prefix='pred')
-            render_mesh_with_skeleton(gt_joints, gt_bones, vertices, faces, output_dir, file_name, prefix='gt', root_idx=gt_root_index)
+                render_mesh_with_skeleton(pred_joints, pred_bones, vertices_norm, faces, output_dir, file_name, prefix='pred')
+            render_mesh_with_skeleton(gt_joints, gt_bones, vertices_norm, faces, output_dir, file_name, prefix='gt', root_idx=gt_root_index)
             

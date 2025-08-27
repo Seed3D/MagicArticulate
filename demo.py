@@ -25,14 +25,16 @@ from accelerate.utils import set_seed
 from accelerate.utils import DistributedDataParallelKwargs
 
 from skeleton_models.skeletongen import SkeletonGPT
+from data_utils.save_npz import normalize_to_unit_cube
 from utils.mesh_to_pc import MeshProcessor
 from utils.save_utils import save_mesh, pred_joints_and_bones, save_skeleton_to_txt, save_args, \
-                        remove_duplicate_joints, save_skeleton_obj, render_mesh_with_skeleton
+                        merge_duplicate_joints_and_fix_bones, save_skeleton_obj, render_mesh_with_skeleton
                        
 class Dataset:
-    def __init__(self, input_list, input_pc_num = 8192, apply_marching_cubes = True, octree_depth = 7):
+    def __init__(self, input_list, input_pc_num = 8192, apply_marching_cubes = True, octree_depth = 7, output_dir = None):
         super().__init__()
         self.data = []
+        self.output_dir = output_dir
     
         mesh_list = []
         for input_path in input_list:
@@ -58,9 +60,8 @@ class Dataset:
         # normalize pc coor
         pc_coor = data_dict['pc_normal'][:, :3]
         normals = data_dict['pc_normal'][:, 3:]
-        bounds = np.array([pc_coor.min(axis=0), pc_coor.max(axis=0)])
-        pc_coor = pc_coor - (bounds[0] + bounds[1])[None, :] / 2
-        pc_coor = pc_coor / np.abs(pc_coor).max() * 0.9995
+        pc_coor, center, scale = normalize_to_unit_cube(pc_coor, scale_factor=0.9995)
+
         data_dict['file_name'] = self.data[idx]['file_name']
         pc_coor = pc_coor.astype(np.float32)
         normals = normals.astype(np.float32)
@@ -69,7 +70,7 @@ class Dataset:
         point_cloud.metadata['normals'] = normals 
         
         try:
-            point_cloud.export(f"{data_dict['file_name']}.ply")
+            point_cloud.export(os.path.join(self.output_dir, f"{data_dict['file_name']}.ply"))
         except Exception as e:
             print(f"fail to save point clouds: {e}")
 
@@ -78,11 +79,15 @@ class Dataset:
         
         vertices = self.data[idx]['vertices']
         faces = self.data[idx]['faces']
-        bounds = np.array([vertices.min(axis=0), vertices.max(axis=0)])
-        trans = (bounds[0] + bounds[1])[None, :] / 2
-        scale = ((bounds[1] - bounds[0]).max() + 1e-5)
-        data_dict['trans'] = trans
-        data_dict['scale'] = scale
+        bounds = np.array([pc_coor.min(axis=0), pc_coor.max(axis=0)])
+        pc_center = (bounds[0] + bounds[1])[None, :] / 2
+        pc_scale = ((bounds[1] - bounds[0]).max() + 1e-5)
+        data_dict['transform_params'] = torch.tensor([
+            center[0], center[1], center[2],
+            scale,
+            pc_center[0][0], pc_center[0][1], pc_center[0][2], 
+            pc_scale
+        ], dtype=torch.float32)
         data_dict['vertices'] = vertices
         data_dict['faces']= faces
         return data_dict
@@ -140,9 +145,9 @@ if __name__ == "__main__":
     if args.input_dir is not None:
         input_list = sorted(os.listdir(args.input_dir))
         input_list = [os.path.join(args.input_dir, x) for x in input_list if x.endswith('.ply') or x.endswith('.obj') or x.endswith('.stl')]
-        dataset = Dataset(input_list, args.input_pc_num, args.apply_marching_cubes, args.octree_depth)
+        dataset = Dataset(input_list, args.input_pc_num, args.apply_marching_cubes, args.octree_depth, output_dir)
     elif args.input_path is not None:
-        dataset = Dataset([args.input_path], args.input_pc_num, args.apply_marching_cubes, args.octree_depth)
+        dataset = Dataset([args.input_path], args.input_pc_num, args.apply_marching_cubes, args.octree_depth, output_dir)
     else:
         raise ValueError("input_dir or input_path must be provided.")
     
@@ -165,22 +170,29 @@ if __name__ == "__main__":
         pred_rig_filename = os.path.join(output_dir, f"{file_name}_pred.txt")
         mesh_filename = os.path.join(output_dir, f"{file_name}_mesh.obj")
         
-        trans = batch_data_label['trans'][0].cpu().numpy()
-        scale = batch_data_label['scale'][0].cpu().numpy()
+        transform_params = batch_data_label['transform_params'][0].cpu().numpy()
+        trans = transform_params[:3]
+        scale = transform_params[3]
+        pc_trans = transform_params[4:7]
+        pc_scale = transform_params[7]
         vertices = batch_data_label['vertices'][0].cpu().numpy()
         faces = batch_data_label['faces'][0].cpu().numpy()
         
         skeleton = pred_bone_coords[0].cpu().numpy() 
         pred_joints, pred_bones = pred_joints_and_bones(skeleton.squeeze())
         
-        if args.hier_order: 
-            pred_joints, pred_bones, pred_root_index = remove_duplicate_joints(pred_joints, pred_bones, root_index=pred_bones[0][0])
+        # Post process: merge duplicate or nearby joints and deduplicate bones.
+        if args.hier_order:
+            pred_root_index = pred_bones[0][0]
+            pred_joints, pred_bones, pred_root_index = merge_duplicate_joints_and_fix_bones(pred_joints, pred_bones, root_index=pred_root_index) 
         else:
-            pred_joints, pred_bones = remove_duplicate_joints(pred_joints, pred_bones)
-        
-        # pred_root_index = pred_bones[0][0]
+            pred_joints, pred_bones = merge_duplicate_joints_and_fix_bones(pred_joints, pred_bones)
+            pred_root_index = None
+
         # when save rig to txt, denormalize the skeletons to the same scale with input meshes
-        pred_joints_denorm = pred_joints * scale + trans
+        pred_joints_denorm = pred_joints * pc_scale + pc_trans # first align with point cloud
+        pred_joints_denorm = pred_joints_denorm / scale + trans # then align with original mesh
+        
         save_skeleton_to_txt(pred_joints_denorm, pred_bones, pred_root_index, args.hier_order, vertices, pred_rig_filename)
         
         # save skeletons
@@ -190,7 +202,8 @@ if __name__ == "__main__":
             save_skeleton_obj(pred_joints, pred_bones, pred_skel_filename, use_cone=False)
         
         # when saving mesh and rendering, use normalized vertices (-0.5,0.5)
-        vertices_norm = (vertices - trans) / scale
+        vertices_norm = (vertices - trans) * scale
+        vertices_norm = (vertices_norm - pc_trans) / pc_scale
         save_mesh(vertices_norm, faces, mesh_filename)
         
         # render mesh w/ skeleton

@@ -244,9 +244,13 @@ def process_files(mesh_folder, rig_folder, output_file, num_workers=8):
     
     np.savez_compressed(output_file, data_list, allow_pickle=True) 
 
-# Example usage
-mesh_folder = 'meshes/'
-rig_folder = 'rigs/'
-output_file = 'results.npz'
+def main():
+    # Example usage
+    mesh_folder = 'meshes/'
+    rig_folder = 'rigs/'
+    output_file = 'results.npz'
 
-process_files(mesh_folder, rig_folder, output_file)
+    process_files(mesh_folder, rig_folder, output_file)
+
+if __name__ == "__main__":
+    main()

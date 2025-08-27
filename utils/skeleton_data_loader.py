@@ -15,6 +15,7 @@ import torch
 from torch import is_tensor
 from torch.utils.data import Dataset
 from torch.nn.utils.rnn import pad_sequence
+from data_utils.save_npz import normalize_to_unit_cube
 
 import numpy as np  
     
@@ -38,7 +39,6 @@ class SkeletonData(Dataset):
         data = self.data[idx] 
         
         joints = data['joints']
-        bones = data['bones']
         vertices = data['vertices']
         pc_normal = data['pc_w_norm']
         
@@ -57,23 +57,32 @@ class SkeletonData(Dataset):
         normal = normal / np.linalg.norm(normal, axis=1, keepdims=True)
 
         # scale to -0.5 to 0.5
-        bounds = np.array([vertices.min(axis=0), vertices.max(axis=0)])
-        vertices = vertices - (bounds[0] + bounds[1])[None, :] / 2
-        vertices = vertices / ((bounds[1] - bounds[0]).max() + 1e-5)
-        joints = joints - (bounds[0] + bounds[1])[None, :] / 2
-        joints = joints / ((bounds[1] - bounds[0]).max() + 1e-5)
+        _, center, scale = normalize_to_unit_cube(vertices.copy(), scale_factor=0.9995)
+        joints = (joints - center) * scale # align joints with pc first
+
+        bounds = np.array([pc_coor.min(axis=0), pc_coor.max(axis=0)])
+        pc_center = (bounds[0] + bounds[1])[None, :]  / 2
+        pc_scale = (bounds[1] - bounds[0]).max() + 1e-5
+        pc_coor = (pc_coor - pc_center) / pc_scale
+        joints = (joints - pc_center) / pc_scale
 
         joints = joints.clip(-0.5, 0.5)
        
         data_dict['joints'] = torch.from_numpy(np.asarray(joints).astype(np.float16))
-        data_dict['bones'] = torch.from_numpy(np.asarray(bones).astype(np.int64))
+        data_dict['bones'] = torch.from_numpy(data['bones'].astype(np.int64))
         pc_coor = pc_coor / np.abs(pc_coor).max() * 0.9995
         data_dict['pc_normal'] = torch.from_numpy(np.concatenate([pc_coor, normal], axis=-1).astype(np.float16))
         data_dict['vertices'] = torch.from_numpy(data['vertices'].astype(np.float16))
         data_dict['faces'] = torch.from_numpy(data['faces'].astype(np.int64))
         data_dict['uuid'] = data['uuid']
         data_dict['root_index'] = str(data['root_index'])
-   
+        data_dict['transform_params'] = torch.tensor([
+            center[0], center[1], center[2],
+            scale,
+            pc_center[0][0], pc_center[0][1], pc_center[0][2], 
+            pc_scale
+        ], dtype=torch.float32)
+
         return data_dict
     
     @classmethod

@@ -155,21 +155,21 @@ These are the numbers (the metrics are in units of 10−2) that you should be ab
     </tr>
     <tr>
       <td>train on Arti-XL2.0 (spatial)</td>
-	  <td><b>3.034</b></td>
-      <td><b>2.263</b></td>
-      <td><b>1.910</b></td>
-      <td><b>3.999</b></td>
-      <td><b>3.027</b></td>
-      <td><b>2.591</b></td>
+	  <td><b>3.024</b></td>
+      <td><b>2.260</b></td>
+      <td><b>1.915</b></td>
+      <td><b>4.003</b></td>
+      <td><b>3.026</b></td>
+      <td><b>2.586</b></td>
     </tr>
     <tr>
       <td>train on Arti-XL2.0 (hier)</td>
-      <td>3.264</td>
-      <td>2.503</td>
-      <td>2.123</td>
-      <td>4.114</td>
-      <td>3.137</td>
-      <td>2.693</td>
+      <td>3.172</td>
+      <td>2.419</td>
+      <td>2.050</td>
+      <td>4.129</td>
+      <td>3.149</td>
+      <td>2.705</td>
     </tr>
   </tbody>
 </table>

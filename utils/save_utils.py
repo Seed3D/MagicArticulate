@@ -44,64 +44,115 @@ def pred_joints_and_bones(bone_coor):
 
     pred_bones = np.column_stack([parent_indices, child_indices])
     
-    return pred_joints, pred_bones
+    valid_bones = pred_bones[parent_indices != child_indices]
+    
+    return pred_joints, valid_bones
 
-def remove_duplicate_joints(joints, bones, root_index=None):
 
-    coord_to_indices = {}
-    for idx, coord in enumerate(joints):
-        key = tuple(coord) 
-        coord_to_indices.setdefault(key, []).append(idx)
-
-    representative = {}  # old_index -> rep_index
-    for coord, idx_list in coord_to_indices.items():
-        rep = idx_list[0] 
-        for idx in idx_list:
-            representative[idx] = rep
-
-    remapped_bones_set = set() 
-    for parent_old, child_old in bones:
-        p_rep = representative[parent_old]
-        c_rep = representative[child_old]
-        # remove self connected bones
-        if p_rep != c_rep:
-            remapped_bones_set.add((p_rep, c_rep))
-
-    remapped_bones = list(remapped_bones_set)
-
-    used_indices = set()
-    for p_rep, c_rep in remapped_bones:
-        used_indices.add(p_rep)
-        used_indices.add(c_rep)
+def merge_duplicate_joints_and_fix_bones(joints, bones, tolerance=0.0025, root_index=None):
+    """
+    merge duplicate joints that are within a certain tolerance distance, and fix bones to maintain connectivity.
+    Also merge bones that become duplicates after joint merging.
+    """
+    n_joints = len(joints)
+    
+    # find merge joint groups
+    merge_groups = []
+    used = [False] * n_joints
+    
+    for i in range(n_joints):
+        if used[i]:
+            continue
+            
+        # find all joints within tolerance distance to joint i
+        group = [i]
+        for j in range(i + 1, n_joints):
+            if not used[j]:
+                dist = np.linalg.norm(joints[i] - joints[j])
+                if dist < tolerance:
+                    group.append(j)
+                    used[j] = True
+        
+        used[i] = True
+        merge_groups.append(group)
+        
+        # if len(group) > 1:
+        #     print(f"find duplicate joints group: {group}")
+    
+    # build merge map: choose representative joint
+    merge_map = {}
+    for group in merge_groups:
+        if root_index is not None and root_index in group:
+            representative = root_index
+        else:
+            representative = group[0]  # else choose the first one as representative
+        for joint_idx in group:
+            merge_map[joint_idx] = representative
+    
+    # track root joint change
+    intermediate_root_index = None
+    if root_index is not None:
+        intermediate_root_index = merge_map.get(root_index, root_index)
+        # if intermediate_root_index != root_index:
+        #     print(f"root joint index changed from {root_index} to {intermediate_root_index}")
+    
+    # update bones: remove self-loop bones, and merge duplicate bones
+    updated_bones = []
+    
+    for parent, child in bones:
+        new_parent = merge_map.get(parent, parent)
+        new_child = merge_map.get(child, child)
+        
+        if new_parent != new_child: # remove self-loop bones
+            updated_bones.append([new_parent, new_child])
+    
+    # remove duplicate bones
+    unique_bones = []
+    seen_bones = set()
+    
+    for bone in updated_bones:
+        bone_key = tuple(bone)  # keep the order of [parent, child]
+        if bone_key not in seen_bones:
+            seen_bones.add(bone_key)
+            unique_bones.append(bone)
+    
+    # re-index joints to remove unused joints
+    used_joint_indices = set()
+    for parent, child in unique_bones:
+        used_joint_indices.add(parent)
+        used_joint_indices.add(child)
+    if intermediate_root_index is not None:
+        used_joint_indices.add(intermediate_root_index)
+    
+    
+    used_joint_indices = sorted(list(used_joint_indices))
+    
+    # new index for used joints
+    old_to_new = {old_idx: new_idx for new_idx, old_idx in enumerate(used_joint_indices)}
+    
+    final_joints = joints[used_joint_indices]
+    final_bones = np.array([[old_to_new[parent], old_to_new[child]] 
+                           for parent, child in unique_bones])
+    
+    final_root_index = None
+    if intermediate_root_index is not None:
+        final_root_index = old_to_new[intermediate_root_index]
+        if root_index is not None and final_root_index != root_index:
+            print(f"final root index: {root_index} -> {final_root_index}")
+    
+    removed_joints = n_joints - len(final_joints)
+    removed_bones = len(bones) - len(final_bones)
+    
+    # print
+    # if removed_joints > 0 or removed_bones > 0:
+    #     print(f"merge results:")
+    #     print(f"  joint number: {n_joints} -> {len(final_joints)} (remove {removed_joints})")
+    #     print(f"  bone number: {len(bones)} -> {len(final_bones)} (remove {removed_bones})")
     
     if root_index is not None:
-        root_rep = representative[root_index]
-        used_indices.add(root_rep)
-
-    used_indices = sorted(used_indices)
-
-    # old index --> new index
-    old_to_new = {}
-    for new_idx, old_idx in enumerate(used_indices):
-        old_to_new[old_idx] = new_idx
-
-    # get new joints
-    new_joints = np.array([joints[old_idx] for old_idx in used_indices], dtype=joints.dtype)
-
-    # get new bones
-    new_bones = []
-    for p_rep, c_rep in remapped_bones:
-        p_new = old_to_new[p_rep]
-        c_new = old_to_new[c_rep]
-        new_bones.append((p_new, c_new))
-    if root_index is not None:
-        new_root_index = old_to_new[root_rep]
-    new_bones = np.array(new_bones, dtype=int)
-    
-    if root_index is not None:
-        return new_joints, new_bones, new_root_index
+        return final_joints, final_bones, final_root_index
     else:
-        return new_joints, new_bones
+        return final_joints, final_bones
 
 
 def save_skeleton_to_txt(pred_joints, pred_bones, pred_root_index, hier_order, vertices, filename='skeleton.txt'):
@@ -230,7 +281,7 @@ def save_skeleton_obj(joints, bones, save_path, root_index=None, radius_sphere=0
         try:
             bone_vertices, bone_faces = create_bone(parent, child, radius=radius_bone, segments=segments, use_cone=use_cone)
         except ValueError as e:
-            print(f"Skipping connection {idx+1}, reason: {e}")
+            print(f"Skipping connection {parent_idx}-{child_idx}, reason: {e}")
             continue
             
         all_vertices.extend(bone_vertices)

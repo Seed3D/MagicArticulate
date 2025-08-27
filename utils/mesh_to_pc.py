@@ -55,7 +55,7 @@ class MeshProcessor:
         points_per_mesh: int = 8192, 
         apply_marching_cubes: bool = False, 
         octree_depth: int = 7
-    ) -> Tuple[List[np.ndarray], List[trimesh.Trimesh]]:
+    ) -> List[np.ndarray]:
         """
         Process a list of meshes into point clouds with normals.
         """
