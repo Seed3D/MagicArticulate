@@ -42,6 +42,7 @@
 <br />
 
 ## News
+- 2025.9.05: We released our latest project [Puppeteer](https://github.com/Seed3D/Puppeteer) for automatic rigging and animation, check it now!
 - 2025.8.07: We updated the [skeleton generation weights](https://huggingface.co/Seed3D/MagicArticulate) to fix a training data loader normalization bug causing mesh-skeleton misalignment. Check [here](https://github.com/Seed3D/MagicArticulate/tree/main/assets/skeleton_compare.png) for an example.
 - 2025.6.18: We release the blender script for reading rig (.txt) and mesh (.obj) from GLB files.
 - 2025.4.18: We have updated the preprocessed dataset to exclude entries with skinning issues (118 from the training and 3 from the test, whose skinning weight row sums fell below 1) and duplicated joint names (2 from the training). You can download the [cleaned data](https://huggingface.co/datasets/chaoyue7/Articulation-XL2.0) again or update it yourself by running: `python data_utils/update_npz_rm_issue_data.py`. Still remember to normalize skinning weights in your dataloader.
